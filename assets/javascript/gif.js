@@ -47,33 +47,35 @@ $(document).ready(function () {
             method: "GET"
         }).then(function (response) {
 
-            var imageUrl
-            var imageTitle
+        
             var img
-            var newDiv = $("<div>")
-            
+            var newDivCard = $("<div class='card col-md-6'>")
+           // var newDivCardBody = $("<div class='card-body'>")
+
 
             //loop over the array of response images
             for (var i = 0; i < response.data.length; i++) {
-                var imageUrl = response.data[i].images.original.url
+                var imageUrlStill = response.data[i].images.original_still.url
+                var imageUrlAnimate = response.data[i].images.original.url
                 var imageTitle = response.data[i].title
                 var rating = response.data[i].rating
-               
+
 
                 console.log(response)
 
                 //Create an image variagle and set the scr attribute
-                img = $("<img>").attr("src", imageUrl).attr("alt", imageTitle).attr("class", "img-thumbnail")
-                rating = $("<p>").text("Rating: " + response.data[i].rating)
-                title = $("<p>").text("Title: " + response.data[i].title)
+                img = $("<img>").attr("src", imageUrlStill).attr("data-still", imageUrlStill).attr("data-animate", imageUrlAnimate).attr("data-state", "still").attr("alt", imageTitle).attr("class", "gif img-thumbnail")
+                rating = $("<p>").text("Rating: " + rating)
+                title = $("<p>").text("Title: " + imageTitle)
 
 
-                newDiv.append(title).append(rating).append(img)
+                 newDivCard.append(img).append(title).append(rating)
+            
 
                 //console.log(img)
             }
 
-            $("#gifs-view").empty().append(newDiv)
+            $("#gifs-view").empty().append(newDivCard)
 
         });
 
@@ -81,14 +83,24 @@ $(document).ready(function () {
 
     displayPlaceGif(travelPlace);
 
-
-
-    // Click event listener to all elements with the class "place"
+    
     $(document).on("click", ".place", function () {
         var travelPlace = $(this).attr("data-place")
         displayPlaceGif(travelPlace)
     })
+    
+    $(document).on("click", ".gif", function () {
 
+        var state = $(this).attr("data-state");
+        if (state === "still") {
+            $(this).attr("src", $(this).attr("data-animate"));
+            $(this).attr("data-state", "animate");
+        } else {
+            $(this).attr("src", $(this).attr("data-still"));
+            $(this).attr("data-state", "still");
+        }
+
+    });
 
     createButtons();
 
